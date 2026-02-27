@@ -1,3 +1,4 @@
+![cert](htb_cert.jpg)
  About the Event
 🎄 Grand Legend — The Tinsel Trouble of Tinselwick
 
@@ -13,4 +14,4 @@ This isn’t a battle to save the world—it’s a dash to save the spirit of th
 
 The Great Snowglobe must sparkle again. And in Tinselwick, even the tiniest heart can outshine the longest night.
 
-<write up coming soon !>
+**<write up coming soon !>**
