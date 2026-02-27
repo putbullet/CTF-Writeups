@@ -5,7 +5,7 @@
 
 > **Platform:** TryHackMe / CTF Lab  
 > **Difficulty:** Beginner / Intermediate  
-> **Time to Root:** 49 minutes  
+> **Time to Root:** ~35 minutes  
 > **Keys Found:** 3 / 3
 
 ---
