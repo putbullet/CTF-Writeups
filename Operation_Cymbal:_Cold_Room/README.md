@@ -1,5 +1,5 @@
 # Google CTF: Security Event Investigation with Google SecOps
-![Google CTF Security Investigation banner](images/ctf-banner.png)
+![Google CTF Security Investigation banner](images/ctf-banner.jpg)
 
 This repository documents three blue-team challenges completed in a hosted Google SecOps (formerly Chronicle) environment: Deceptive Click, OAuth Heist, and Rogue Synthesis. Each challenge required searching security telemetry for a fictional organization, reading raw logs, and deriving specific answers from the evidence. The write-up records the queries, the events they returned, what the evidence establishes, and what it does not.
 
